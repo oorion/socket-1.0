@@ -1,0 +1,15 @@
+{
+  "name": "MySocketServer",
+  "description": "Playing around with socket.io",
+  "engines": {
+    "node": "latest"
+  },
+  "dependencies": {
+    "node-fs": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest",
+    "ws": "latest",
+    "url": "latest"
+  },
+  "author": "Orion Osborn"
+}

@@ -1,0 +1,68 @@
+OB<html>
+  <head>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  </head>
+  <body>
+
+  <button id="startbutton">Start</button>
+
+  <div id="chatbox">
+    <div id="messages"></div>
+    <input id="chatinput" type="text" placeholder="Message:"/>
+  </div>
+
+  <script>
+    var server_ip = "http://162.243.140.68:8001/";
+    var socket = io.connect();
+    
+    $('#startbutton').click(function(){
+      socket.emit('start', {});
+    });
+
+
+  /*create random color*/
+  var color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+
+  /*not sure what this function is doing or whether it is necessary*/
+  function sanitize(msg) {
+    return msg.replace(/</g, '&lt;');
+  }
+  
+  function addToChat(msg, color) {
+    var messages = document.getElementById('messages');
+    msg = sanitize(msg);
+    if(color) {
+      msg = '<span style="color: ' + color + '; padding-left: 15px">' + msg + '</span>';
+    } else {
+      msg = '<strong style="padding-left: 15px">' + msg + '</strong>';
+    }
+    messages.innerHTML = messages.innerHTML + msg + '<br>';
+    messages.scrollTop = 10000;
+  }
+
+
+
+  /*adds eventlistener to chatinput div for when the enter button is pressed*/
+  var chatinput = document.getElementById("chatinput");
+  chatinput.addEventListener('keydown', function(event) {
+    var key = event.which || event.keyCode;
+    if(key === 13) {
+      socket.emit("message", {"message": chatinput.value, "color": color, "path": window.location.pathname});
+      console.log('emitted: ' + chatinput.value);
+      chatinput.value = "";
+     }
+  }, false);
+
+  socket.on("message", function(data){
+    addToChat(data.message, data.color);
+  });
+  </script>
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  </body>
+</html>
